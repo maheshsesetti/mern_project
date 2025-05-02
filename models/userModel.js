@@ -7,4 +7,8 @@ export const users = () => {
 
 export const getUsers = () => users();
 
-export const getUserById = (id) => users().find(user => user.id === parseInt(id));
+export const getUserById = (id) => users().find((user) => user.id === parseInt(id));
+
+
+
+

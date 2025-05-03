@@ -32,3 +32,40 @@ export const getFormattedUsersById = async (id) => {
 
     };
 };
+
+
+export const postUser = async (data) => {
+    const { firstName, lastName, email, fullName, createAt, updatedAt } = data;
+    if (!firstName || !lastName || !email) return null;
+
+    let user = await userModel.findOne({ firstName, lastName, email });
+    console.log(user);
+
+    if (user) {
+        return {
+            statusCode: 200, message: 'User Already Exists',
+            data: {
+                id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                fullName: `${user.firstName} ${user.lastName}`,
+                email: user.email,
+                updatedAt: user.updatedAt
+            }
+
+        };
+    }
+    user = await userModel.create(data);
+    console.log(user);
+    return {
+        statusCode: 201, message: 'User Created Successfully',
+        data: {
+            id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            fullName: `${user.firstName} ${user.lastName}`,
+            email: user.email,
+            createdAt: user.createdAt
+        }
+    };
+};

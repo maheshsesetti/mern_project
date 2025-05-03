@@ -1,8 +1,9 @@
 import express from "express";
-import mongoose from 'mongoose';
+
 
 import userRoutes from "./routes/userRoutes.js";
 import { connectDB } from "./db.js";
+import postRouter from "./routes/postRoutes.js";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 connectDB();
 
 app.use('/api/users',userRoutes);
+app.use('/api/posts',postRouter);
 
 app.listen(PORT,()=>{
     console.log(`API running at http://localhost:${PORT}`);

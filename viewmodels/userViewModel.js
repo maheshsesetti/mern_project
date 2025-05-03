@@ -35,7 +35,7 @@ export const getFormattedUsersById = async (id) => {
 
 
 export const postUser = async (data) => {
-    const { firstName, lastName, email, fullName, createAt, updatedAt } = data;
+    const { firstName, lastName, email } = data;
     if (!firstName || !lastName || !email) return null;
 
     let user = await userModel.findOne({ firstName, lastName, email });
@@ -50,7 +50,7 @@ export const postUser = async (data) => {
                 lastName: user.lastName,
                 fullName: `${user.firstName} ${user.lastName}`,
                 email: user.email,
-                updatedAt: user.updatedAt
+                createdAt: user.createdAt
             }
 
         };
@@ -66,6 +66,7 @@ export const postUser = async (data) => {
             fullName: `${user.firstName} ${user.lastName}`,
             email: user.email,
             createdAt: user.createdAt
+
         }
     };
 };

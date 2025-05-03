@@ -6,10 +6,11 @@ import mongoose from "mongoose"
     firstName : {type:String,required:true},
     lastName :{type:String,required:true},
     email:{type:String,required:true},
-    fullName:{type:String},
-    createdAt: { type: Date, default: Date.now},
-    updateAt: { type: Date,default: Date.now}
-});
+    fullName:{type:String}
+
+}, {
+    timestamps: true
+  });
 
 export const userModel = mongoose.model('User',userScheme);
 

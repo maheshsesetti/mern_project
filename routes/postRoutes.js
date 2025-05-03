@@ -1,5 +1,8 @@
 import express from "express";
+import { addFeed,getfeedById } from "../controller/feedController.js";
 
-const router = express.Router();
+const postRouter = express.Router();
 
-router.post('/postFeed');
+postRouter.post('/postFeed',addFeed);
+postRouter.get('/',getfeedById);
+export default postRouter;

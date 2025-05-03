@@ -7,7 +7,7 @@ export const fetchUsers = async (req, res) => {
         const { id } = req.query;
         if (id) {
             if (!mongoose.Types.ObjectId.isValid(id)) {
-                return res.status(404).json({ statusCode: 404, message: 'User not found' });
+                return res.status(404).json({ statusCode: 404, message: 'Please provide valid Id' });
             }
             const formattedUser = await getFormattedUsersById(id);
             if (!formattedUser) {
@@ -35,7 +35,7 @@ export const addUser = async (req, res) => {
         let status = user.message === 'User Already Exists' ? 200: 201
         return res.status(status).json(user);
     } catch (error) {
-        return res.json({ statusCode: 500, message: 'Failed', message: error.message });
+        return res.status(500).json({ statusCode: 500, message: 'Failed', message: error.message });
     }
 };
 

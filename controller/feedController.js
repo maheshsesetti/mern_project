@@ -18,7 +18,7 @@ export const addFeed = async (req, res) => {
 
 export const getfeedById = async (req, res) => {
     try {
-        const { id, page, limit } = req.query;
+        const { id, page, limit,search } = req.query;
     
         if (id) {
             if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -35,8 +35,8 @@ export const getfeedById = async (req, res) => {
 
         let allFeed;
         if (page && limit) {
-            const skip = (parseInt(page) - 1) * parseInt(limit);
-            allFeed = await getAllFeed({ page: parseInt(page), limit: parseInt(limit), skip });
+            const skip = parseInt(limit) * (parseInt(page) - 1);
+            allFeed = await getAllFeed({ page: parseInt(page), limit: parseInt(limit), skip,search });
         } else {
             allFeed = await getAllFeed();
         }

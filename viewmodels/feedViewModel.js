@@ -54,27 +54,53 @@ export const getFeedById = async (id) => {
 };
 
 export const getAllFeed = async (pagination = {}) => {
-    const { skip, limit } = pagination;
+    const { skip, limit, search } = pagination;
+    const regexFilter = typeof search === 'string' ? search : '';
+    let pipelines =
+        [
+            {
+                $match: {
+                    $or: [
+                        { userName: { $regex: regexFilter, $options: "i" } },
+                        { postContent: { $regex: regexFilter, $options: "i" } }
+                    ]
+                }
+            },
+            {
+                '$facet': {
+                    'total': [
+                        {
+                            '$group': {
+                                '_id': null,
+                                'count': {
+                                    '$sum': 1
+                                }
+                            }
+                        }
+                    ],
+                    'feed': [
+                        {
+                            '$sort': {
+                                'createdAt': -1
+                            }
+                        },
+                        {
+                            '$skip': skip || 0
+                        },
+                        {
+                            '$limit': limit || 10
+                        },
 
-    let pipelines = [{ $sort: { createdAt: -1 } }];
+                    ]
+                }
+            }
+        ];
 
 
-    if (typeof skip === 'number' && typeof limit === 'number') {
-        pipelines.push({ $skip: skip });
-        pipelines.push({ $limit: limit });
-        
-    }
-
-    const countPipeline = [{$count: "total"}];
+    const allFeeds = await feedModel.aggregate(pipelines);
 
 
-
-    const [allFeeds, totalCount] = await Promise.all([
-        feedModel.aggregate(pipelines),
-        feedModel.aggregate(countPipeline)
-    ]);
-
-    let data = allFeeds.map((feed) => ({
+    let data = allFeeds[0].feed.map((feed) => ({
         id: feed._id,
         userId: feed.userId,
         userName: feed.userName,
@@ -87,10 +113,10 @@ export const getAllFeed = async (pagination = {}) => {
     return {
         statusCode: 200,
         message: 'Feed Fetched Succesfully',
-        total: totalCount[0]?.total || 0,
+        total: allFeeds[0].total[0]?.count || 0,
         skip,
         limit,
-        totalPages: Math.ceil((totalCount[0]?.total || 0) / limit),
+        totalPages: Math.ceil((allFeeds[0].total[0]?.count || 0) / limit) || 0,
         result: data
     };
 };
